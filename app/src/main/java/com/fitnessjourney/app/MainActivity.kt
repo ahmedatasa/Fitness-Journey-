@@ -137,6 +137,20 @@ private fun App(p: android.content.SharedPreferences) {
                     }
                 }
                 item { Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) { Metric("الخطوات", steps.toString(), Icons.Default.DirectionsWalk, Modifier.weight(1f)); Metric("المشي", walk.toString() + " د", Icons.Default.DirectionsWalk, Modifier.weight(1f)); Metric("الجري", run.toString() + " د", Icons.Default.DirectionsRun, Modifier.weight(1f)) } }
+                item {
+                    Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
+                        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Text("ابدأ خطتك", fontSize = 20.sp, color = Navy, fontWeight = FontWeight.Bold)
+                            Text("دليل بصري للتمارين والوجبات، مع شرح الأداء والأخطاء الشائعة.", color = Color.Gray)
+                            Button(onClick = { page = "دليل التمارين" }, modifier = Modifier.fillMaxWidth()) {
+                                Icon(Icons.Default.FitnessCenter, null); Text("  استكشف التمارين بالشرح")
+                            }
+                            OutlinedButton(onClick = { page = "دليل الوجبات" }, modifier = Modifier.fillMaxWidth()) {
+                                Icon(Icons.Default.Restaurant, null); Text("  استكشف الوجبات المصرية")
+                            }
+                        }
+                    }
+                }
                 item { Text("تسجيل سريع", fontWeight = FontWeight.Bold, fontSize = 19.sp, color = Navy) }
                 item {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -147,6 +161,23 @@ private fun App(p: android.content.SharedPreferences) {
                 item { Text("آخر التسجيلات", fontWeight = FontWeight.Bold, fontSize = 19.sp, color = Navy) }
                 if (logs.isEmpty()) item { Text("لا توجد تسجيلات بعد.", color = Color.Gray) }
                 items(logs.take(5)) { LogItem(it) }
+            }
+            "دليل التمارين" -> LazyColumn(Modifier.padding(pad).fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp), contentPadding = PaddingValues(bottom = 24.dp)) {
+                item { Text("مكتبة التمارين", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Navy); Text("اختَر تمرينًا مناسبًا لمستواك. ابدأ بهدوء، وتوقف عند الألم الحاد أو الدوخة.", color = Color.Gray) }
+                item { ExerciseGuideCard("المشي في المكان", "إحماء • مبتدئ • بدون أدوات", Icons.Default.DirectionsWalk, "1) قف باستقامة وارخِ الكتفين.  2) ارفع الركبتين بالتبادل.  3) حرّك الذراعين بصورة طبيعية.  4) حافظ على تنفس منتظم.", "ابدأ بـ 3–5 دقائق، ثم زد تدريجيًا حسب قدرتك.", "الانحناء للأمام، حبس النفس، أو رفع الركبتين بعنف.") { addLog("تمرين", "المشي في المكان", "تم تسجيل التمرين من مكتبة التمارين") } }
+                item { ExerciseGuideCard("الجلوس والوقوف من كرسي", "قوة الرجلين • مبتدئ • كرسي ثابت", Icons.Default.AccessibilityNew, "1) ضع الكرسي خلفك على أرض ثابتة.  2) القدمان بعرض الكتفين.  3) ادفع الوركين للخلف وانزل ببطء.  4) المس الكرسي ثم قف مع الزفير.", "ابدأ بـ 1–2 مجموعة، كل مجموعة 6–10 تكرارات، مع راحة 60–90 ثانية.", "ترك الركبتين تنهاران للداخل، أو السقوط على الكرسي بسرعة.") { addLog("تمرين", "الجلوس والوقوف من كرسي", "تم تسجيل التمرين من مكتبة التمارين") } }
+                item { ExerciseGuideCard("ضغط الحائط", "الجزء العلوي • مبتدئ • حائط", Icons.Default.FitnessCenter, "1) ضع راحتي اليدين على الحائط بمستوى الصدر.  2) ارجع للخلف خطوة أو خطوتين.  3) اثنِ المرفقين واقترب بجسمك كقطعة واحدة.  4) ادفع الحائط للعودة.", "ابدأ بـ 1–2 مجموعة، كل مجموعة 6–10 تكرارات.", "تقويس أسفل الظهر، أو إبعاد المرفقين كثيرًا عن الجسم.") { addLog("تمرين", "ضغط الحائط", "تم تسجيل التمرين من مكتبة التمارين") } }
+                item { ExerciseGuideCard("رفع الكعبين", "توازن وربلة الساق • مبتدئ • كرسي للدعم", Icons.Default.Accessibility, "1) قف خلف كرسي ثابت وامسكه بخفة.  2) ارفع الكعبين ببطء.  3) اثبت لحظة.  4) انزل بتحكم دون ارتداد.", "ابدأ بـ 2 مجموعة من 8–12 تكرارًا.", "التأرجح أو الاعتماد الكامل على اليدين بدل عضلات الساق.") { addLog("تمرين", "رفع الكعبين", "تم تسجيل التمرين من مكتبة التمارين") } }
+                item { Text("قاعدة التدرج", color = Navy, fontWeight = FontWeight.Bold, fontSize = 18.sp) }
+                item { Text("نفّذ التمرين بجودة قبل زيادة التكرارات. اترك يوم راحة عند الحاجة، واستشر مختصًا إذا كانت لديك حالة صحية أو إصابة تؤثر على الحركة.", color = Color.Gray) }
+            }
+            "دليل الوجبات" -> LazyColumn(Modifier.padding(pad).fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp), contentPadding = PaddingValues(bottom = 24.dp)) {
+                item { Text("دليل الأكل المصري", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Navy); Text("أمثلة مرئية مبسطة لبناء وجبة متوازنة. الكميات والسعرات الفعلية تختلف حسب الوصفة وحجم الحصة.", color = Color.Gray) }
+                item { MealGuideCard("فطار متوازن", "بيض + عيش بلدي + خضار", Icons.Default.Restaurant, "بيض مسلوق أو مطهو بقليل من الزيت، مع حصة مناسبة من العيش البلدي وخيار وطماطم.", "يمكن استبدال البيض بالفول، مع ضبط الزيت والعيش حسب هدفك.") }
+                item { MealGuideCard("غداء منزلي", "فراخ أو سمك + أرز + سلطة", Icons.Default.Restaurant, "اجعل نصف الطبق خضارًا، وربعًا مصدر بروتين، والربع المتبقي أرزًا أو بطاطس أو حبوبًا.", "الشوي أو الطهي بالفرن يقلل الحاجة للزيت مقارنة بالقلي العميق.") }
+                item { MealGuideCard("وجبة نباتية", "فول أو عدس + سلطة + عيش", Icons.Default.Spa, "البقول مصدر بروتين وألياف. انتبه لكمية الزيت والإضافات، وأضف خضارًا لزيادة التنوع.", "نوّع مصادر البروتين خلال اليوم واشرب الماء بانتظام.") }
+                item { MealGuideCard("سناك بسيط", "فاكهة + زبادي طبيعي", Icons.Default.LocalCafe, "اختيار بسيط بين الوجبات حسب الجوع واحتياجك اليومي.", "اختر كمية مناسبة، ولا تحتاج إلى تناول سناك إذا لم تكن جائعًا.") }
+                item { Text("مهم: هذه أمثلة إرشادية وليست حسابًا للسعرات أو خطة علاجية. سنربط الكميات بخطة المستخدم عند إضافة محرك التغذية وقاعدة بيانات موثوقة.", color = Color.Gray) }
             }
             "النشاط" -> LazyColumn(Modifier.padding(pad).fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 item { Text("المشي والحركة", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Navy); Text("سجل النشاط والمدة. عداد الخطوات التلقائي قيد التطوير.", color = Color.Gray) }
@@ -241,6 +272,52 @@ private fun LogItem(line: String) {
                 Text((parts.getOrNull(1) ?: "") + " • " + (parts.getOrNull(0) ?: ""), color = Color.Gray, fontSize = 12.sp)
                 if (!parts.getOrNull(3).isNullOrBlank()) Text(parts[3], color = Color.Gray, fontSize = 12.sp)
             }
+        }
+    }
+}
+
+
+@Composable
+private fun ExerciseGuideCard(title: String, subtitle: String, icon: androidx.compose.ui.graphics.vector.ImageVector, steps: String, dosage: String, mistakes: String, onLog: () -> Unit) {
+    Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(Modifier.size(76.dp).background(Color(0xFFE4F7F3), RoundedCornerShape(18.dp)), contentAlignment = Alignment.Center) {
+                    Icon(icon, null, tint = Color(0xFF087F73), modifier = Modifier.size(44.dp))
+                }
+                Column(Modifier.weight(1f)) {
+                    Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Navy)
+                    Text(subtitle, color = Color.Gray, fontSize = 12.sp)
+                }
+            }
+            HorizontalDivider()
+            Text("طريقة الأداء", color = Navy, fontWeight = FontWeight.Bold)
+            Text(steps)
+            Text("الجرعة المقترحة", color = Navy, fontWeight = FontWeight.Bold)
+            Text(dosage)
+            Text("أخطاء شائعة", color = Color(0xFF9A4A20), fontWeight = FontWeight.Bold)
+            Text(mistakes)
+            OutlinedButton(onClick = onLog, modifier = Modifier.fillMaxWidth()) { Icon(Icons.Default.CheckCircle, null); Text("  تسجيل هذا التمرين") }
+        }
+    }
+}
+
+@Composable
+private fun MealGuideCard(title: String, subtitle: String, icon: androidx.compose.ui.graphics.vector.ImageVector, description: String, tip: String) {
+    Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(Modifier.size(76.dp).background(Color(0xFFFFF0D9), RoundedCornerShape(18.dp)), contentAlignment = Alignment.Center) {
+                    Icon(icon, null, tint = Color(0xFF9A5A00), modifier = Modifier.size(42.dp))
+                }
+                Column(Modifier.weight(1f)) {
+                    Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Navy)
+                    Text(subtitle, color = Color.Gray, fontSize = 12.sp)
+                }
+            }
+            Text(description)
+            Text("اقتراح عملي", color = Navy, fontWeight = FontWeight.Bold)
+            Text(tip, color = Color.DarkGray)
         }
     }
 }
