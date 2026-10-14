@@ -136,6 +136,11 @@ private fun App(p: android.content.SharedPreferences) {
                         }
                     }
                 }
+                item {
+                    Button(onClick = { page = "خطة الأسبوع" }, modifier = Modifier.fillMaxWidth().height(54.dp), shape = RoundedCornerShape(16.dp)) {
+                        Icon(Icons.Default.CalendarMonth, null); Text("  اعرض خطتي الأسبوعية")
+                    }
+                }
                 item { Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) { Metric("الخطوات", steps.toString(), Icons.Default.DirectionsWalk, Modifier.weight(1f)); Metric("المشي", walk.toString() + " د", Icons.Default.DirectionsWalk, Modifier.weight(1f)); Metric("الجري", run.toString() + " د", Icons.Default.DirectionsRun, Modifier.weight(1f)) } }
                 item {
                     Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
@@ -161,6 +166,47 @@ private fun App(p: android.content.SharedPreferences) {
                 item { Text("آخر التسجيلات", fontWeight = FontWeight.Bold, fontSize = 19.sp, color = Navy) }
                 if (logs.isEmpty()) item { Text("لا توجد تسجيلات بعد.", color = Color.Gray) }
                 items(logs.take(5)) { LogItem(it) }
+            }
+            "خطة الأسبوع" -> {
+                val h = (height.toFloatOrNull() ?: 0f) / 100f
+                val w = weight.toFloatOrNull() ?: 0f
+                val bmi = if (h > 0f) w / (h * h) else 0f
+                val bmiLabel = when { bmi <= 0f -> "أدخل الطول والوزن لحساب المؤشر"; bmi < 18.5f -> "أقل من النطاق المعتاد"; bmi < 25f -> "ضمن النطاق المعتاد"; bmi < 30f -> "أعلى من النطاق المعتاد"; else -> "أعلى من النطاق المعتاد" }
+                val gentle = level == "مبتدئ" || activity == "قليل الحركة"
+                val duration = if (gentle) "10–15 دقيقة" else "20–30 دقيقة"
+                val days = listOf(
+                    Triple("اليوم 1", "مشي مريح + إحماء", "ابدأ بـ $duration، بسرعة تسمح لك بالكلام دون لهاث شديد."),
+                    Triple("اليوم 2", "قوة منزلية خفيفة", "جلوس ووقوف من كرسي، ضغط حائط، ورفع الكعبين؛ مجموعة أو مجموعتان حسب قدرتك."),
+                    Triple("اليوم 3", "استشفاء وحركة", "مشي خفيف أو إطالات مريحة دون إجبار المفاصل على مدى مؤلم."),
+                    Triple("اليوم 4", "مشي تدريجي", "كرر المشي وزد بضع دقائق فقط إذا كان اليوم السابق مريحًا."),
+                    Triple("اليوم 5", "قوة منزلية خفيفة", "كرر تمارين القوة مع التركيز على الأداء والتنفس الصحيح."),
+                    Triple("اليوم 6", "نشاط اختياري", "مشي مريح أو نشاط تحبه، مع التوقف عند التعب غير المعتاد."),
+                    Triple("اليوم 7", "راحة ومراجعة", "سجّل الوزن عند رغبتك وراجع الالتزام والنوم والطاقة.")
+                )
+                LazyColumn(Modifier.padding(pad).fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(bottom = 28.dp)) {
+                    item {
+                        Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = Navy)) {
+                            Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("خطة أسبوعك الأول", color = Teal, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                Text("مبنية على بياناتك الحالية", color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Bold)
+                                Text("المكان: $place • الخبرة: $level • النشاط: $activity", color = Color.White)
+                                Text("مؤشر كتلة الجسم التقريبي: " + if (bmi > 0f) String.format(Locale.US, "%.1f", bmi) else "غير متاح", color = Teal, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                                Text(bmiLabel, color = Color.White)
+                            }
+                        }
+                    }
+                    item { Text("الجدول المقترح", fontSize = 21.sp, color = Navy, fontWeight = FontWeight.Bold) }
+                    items(days) { day -> PlanDayCard(day.first, day.second, day.third) { addLog("خطة", day.first + " — " + day.second, "تم تسجيل إنجاز اليوم") } }
+                    item {
+                        Card(shape = RoundedCornerShape(18.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFFE4F7F3))) {
+                            Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text("كيف تتدرج؟", color = Navy, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                                Text("إذا أنهيت الأسبوع دون ألم أو إجهاد غير معتاد، زد المدة تدريجيًا في الأسبوع التالي. لا تحتاج إلى الجري أو إلى أدوات رياضية للبدء.")
+                                Text("ملاحظة: هذه بداية عامة تتكيف مع مستوى النشاط والخبرة والمكان، وليست تشخيصًا أو وصفة طبية. مؤشر كتلة الجسم أداة فرز تقريبية وليس حكمًا كاملًا على الصحة.", color = Color.DarkGray, fontSize = 12.sp)
+                            }
+                        }
+                    }
+                }
             }
             "دليل التمارين" -> LazyColumn(Modifier.padding(pad).fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp), contentPadding = PaddingValues(bottom = 24.dp)) {
                 item { Text("مكتبة التمارين", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Navy); Text("اختَر تمرينًا مناسبًا لمستواك. ابدأ بهدوء، وتوقف عند الألم الحاد أو الدوخة.", color = Color.Gray) }
@@ -318,6 +364,21 @@ private fun MealGuideCard(title: String, subtitle: String, icon: androidx.compos
             Text(description)
             Text("اقتراح عملي", color = Navy, fontWeight = FontWeight.Bold)
             Text(tip, color = Color.DarkGray)
+        }
+    }
+}
+
+
+@Composable
+private fun PlanDayCard(day: String, title: String, details: String, onDone: () -> Unit) {
+    Card(shape = RoundedCornerShape(18.dp), colors = CardDefaults.cardColors(containerColor = Color.White)) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(day, color = Teal, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+            Text(title, color = Navy, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text(details, color = Color.DarkGray)
+            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
+                Icon(Icons.Default.CheckCircle, null); Text("  تسجيل إنجاز اليوم")
+            }
         }
     }
 }
