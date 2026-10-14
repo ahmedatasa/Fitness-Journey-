@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,6 +18,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -337,7 +340,7 @@ private fun ExerciseGuideCard(title: String, subtitle: String, icon: androidx.co
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Box(Modifier.size(76.dp).background(Color(0xFFE4F7F3), RoundedCornerShape(18.dp)), contentAlignment = Alignment.Center) {
-                    Icon(icon, null, tint = Color(0xFF087F73), modifier = Modifier.size(44.dp))
+                    ExerciseIllustration(title)
                 }
                 Column(Modifier.weight(1f)) {
                     Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Navy)
@@ -362,7 +365,7 @@ private fun MealGuideCard(title: String, subtitle: String, icon: androidx.compos
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Box(Modifier.size(76.dp).background(Color(0xFFFFF0D9), RoundedCornerShape(18.dp)), contentAlignment = Alignment.Center) {
-                    Icon(icon, null, tint = Color(0xFF9A5A00), modifier = Modifier.size(42.dp))
+                    MealIllustration(title)
                 }
                 Column(Modifier.weight(1f)) {
                     Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Navy)
@@ -386,6 +389,103 @@ private fun PlanDayCard(day: String, title: String, details: String, onDone: () 
             Text(details, color = Color.DarkGray)
             OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
                 Icon(Icons.Default.CheckCircle, null); Text("  تسجيل إنجاز اليوم")
+            }
+        }
+    }
+}
+
+
+/**
+ * رسومات تعليمية مرسومة داخل التطبيق؛ تعمل دون إنترنت أو تحميل صور من مواقع خارجية.
+ * هي رسومات توضيحية للحركة والطعام وليست صورًا فوتوغرافية أو بديلًا عن إشراف مختص.
+ */
+@Composable
+private fun ExerciseIllustration(title: String) {
+    Canvas(Modifier.size(64.dp)) {
+        val pt: (Float, Float) -> Offset = { x, y -> Offset(size.width * x / 100f, size.height * y / 100f) }
+        val stroke = size.width * 0.065f
+        val skin = Color(0xFFD99A70)
+        val shirt = Color(0xFF087F73)
+        val pants = Color(0xFF243B64)
+        val floor = Color(0xFFB5DCD5)
+        drawLine(floor, pt(10f, 88f), pt(90f, 88f), strokeWidth = size.width * 0.025f, cap = StrokeCap.Round)
+        // رأس وجذع وملابس بألوان واضحة لقراءة الوضعية بصريًا.
+        drawCircle(skin, radius = size.width * 0.085f, center = pt(50f, 17f))
+        drawLine(shirt, pt(50f, 27f), pt(50f, 53f), strokeWidth = stroke * 1.55f, cap = StrokeCap.Round)
+        when {
+            title.contains("المشي") -> {
+                drawLine(skin, pt(48f, 33f), pt(29f, 46f), strokeWidth = stroke, cap = StrokeCap.Round)
+                drawLine(skin, pt(52f, 34f), pt(69f, 42f), strokeWidth = stroke, cap = StrokeCap.Round)
+                drawLine(pants, pt(50f, 53f), pt(32f, 72f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(50f, 53f), pt(70f, 70f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(shirt, pt(32f, 72f), pt(27f, 82f), strokeWidth = stroke * 0.7f, cap = StrokeCap.Round)
+                drawLine(shirt, pt(70f, 70f), pt(78f, 80f), strokeWidth = stroke * 0.7f, cap = StrokeCap.Round)
+            }
+            title.contains("كرسي") -> {
+                drawLine(skin, pt(48f, 34f), pt(32f, 44f), strokeWidth = stroke, cap = StrokeCap.Round)
+                drawLine(skin, pt(52f, 34f), pt(69f, 42f), strokeWidth = stroke, cap = StrokeCap.Round)
+                drawLine(pants, pt(50f, 53f), pt(34f, 65f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(34f, 65f), pt(58f, 68f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(50f, 53f), pt(69f, 63f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(69f, 63f), pt(69f, 79f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(Color(0xFFB77B45), pt(60f, 68f), pt(82f, 68f), strokeWidth = stroke * 0.7f, cap = StrokeCap.Round)
+                drawLine(Color(0xFFB77B45), pt(78f, 68f), pt(78f, 85f), strokeWidth = stroke * 0.7f, cap = StrokeCap.Round)
+            }
+            title.contains("ضغط") -> {
+                drawLine(skin, pt(48f, 34f), pt(27f, 43f), strokeWidth = stroke, cap = StrokeCap.Round)
+                drawLine(skin, pt(52f, 34f), pt(73f, 43f), strokeWidth = stroke, cap = StrokeCap.Round)
+                drawLine(pants, pt(50f, 53f), pt(42f, 70f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(42f, 70f), pt(35f, 82f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(50f, 53f), pt(61f, 70f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(61f, 70f), pt(72f, 82f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(Color(0xFFB5DCD5), pt(82f, 23f), pt(82f, 86f), strokeWidth = stroke * 0.75f, cap = StrokeCap.Round)
+            }
+            else -> {
+                drawLine(skin, pt(48f, 34f), pt(31f, 43f), strokeWidth = stroke, cap = StrokeCap.Round)
+                drawLine(skin, pt(52f, 34f), pt(69f, 43f), strokeWidth = stroke, cap = StrokeCap.Round)
+                drawLine(pants, pt(50f, 53f), pt(43f, 73f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(43f, 73f), pt(43f, 83f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(50f, 53f), pt(57f, 73f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(pants, pt(57f, 73f), pt(57f, 83f), strokeWidth = stroke * 1.15f, cap = StrokeCap.Round)
+                drawLine(Color(0xFFB5DCD5), pt(76f, 39f), pt(76f, 84f), strokeWidth = stroke * 0.7f, cap = StrokeCap.Round)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MealIllustration(title: String) {
+    Canvas(Modifier.size(64.dp)) {
+        val pt: (Float, Float) -> Offset = { x, y -> Offset(size.width * x / 100f, size.height * y / 100f) }
+        val r = size.width * 0.44f
+        drawCircle(Color(0xFFFFFFFF), radius = r, center = pt(50f, 50f))
+        drawCircle(Color(0xFFD9E4E8), radius = r, center = pt(50f, 50f), style = androidx.compose.ui.graphics.drawscope.Stroke(width = size.width * 0.035f))
+        when {
+            title.contains("فطار") -> {
+                drawCircle(Color(0xFFF4C542), radius = size.width * 0.17f, center = pt(35f, 40f))
+                drawCircle(Color(0xFFFFF4C8), radius = size.width * 0.105f, center = pt(35f, 40f))
+                drawCircle(Color(0xFFCF8D42), radius = size.width * 0.16f, center = pt(67f, 36f))
+                drawCircle(Color(0xFF67A96B), radius = size.width * 0.12f, center = pt(61f, 68f))
+                drawCircle(Color(0xFFE45F50), radius = size.width * 0.085f, center = pt(77f, 66f))
+            }
+            title.contains("نباتية") -> {
+                drawCircle(Color(0xFF9D6037), radius = size.width * 0.19f, center = pt(37f, 42f))
+                drawCircle(Color(0xFFB77A49), radius = size.width * 0.12f, center = pt(37f, 42f))
+                drawCircle(Color(0xFF67A96B), radius = size.width * 0.13f, center = pt(67f, 38f))
+                drawCircle(Color(0xFFE45F50), radius = size.width * 0.09f, center = pt(65f, 68f))
+                drawCircle(Color(0xFFF0D18B), radius = size.width * 0.11f, center = pt(36f, 70f))
+            }
+            title.contains("سناك") -> {
+                drawCircle(Color(0xFFDB4B42), radius = size.width * 0.18f, center = pt(35f, 43f))
+                drawCircle(Color(0xFFFFC857), radius = size.width * 0.15f, center = pt(67f, 39f))
+                drawCircle(Color(0xFFF8F3E8), radius = size.width * 0.19f, center = pt(60f, 68f))
+                drawCircle(Color(0xFF9CC9E5), radius = size.width * 0.06f, center = pt(60f, 68f))
+            }
+            else -> {
+                drawCircle(Color(0xFFCE8C52), radius = size.width * 0.18f, center = pt(34f, 40f))
+                drawCircle(Color(0xFFF0D18B), radius = size.width * 0.15f, center = pt(68f, 37f))
+                drawCircle(Color(0xFF67A96B), radius = size.width * 0.19f, center = pt(38f, 70f))
+                drawCircle(Color(0xFFE45F50), radius = size.width * 0.09f, center = pt(69f, 68f))
             }
         }
     }
